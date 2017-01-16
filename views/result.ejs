@@ -1,0 +1,167 @@
+<html lang="en" ng-app="virtualDoctor">
+<head>
+<title>Virtual Doctor</title>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet"
+	href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css">
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.2/jquery.min.js"></script>
+<script
+	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<!-- Loading the AngularJS file from /public/angularJS folder -->
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script
+	src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+<script
+	src="http://ajax.googleapis.com/ajax/libs/angularjs/1.2.26/angular.min.js"></script>
+<script
+	src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
+<script src="https://code.highcharts.com/highcharts.js"></script>
+<script src="https://code.highcharts.com/modules/exporting.js"></script>
+<script src="angularjs/virtualDoctor.js"></script>
+<script src="angularjs/virtualDoctorController.js"></script>
+<style>
+/* Remove the navbar's default margin-bottom and rounded borders */
+.navbar {
+	margin-bottom: 0;
+	border-radius: 0;
+}
+
+/* Add a gray background color and some padding to the footer */
+footer {
+	background-color: #f2f2f2;
+	padding: 25px;
+}
+
+.carousel-inner img {
+	width: 100%; /* Set width to 100% */
+	margin: auto;
+	min-height: 400px;
+	height: 100%
+}
+
+/* Hide the carousel text when the screen is less than 600 pixels wide */
+@media ( max-width : 600px) {
+	.carousel-caption {
+		display: none;
+	}
+}
+
+.graph {
+	float: right;
+	margin: 0 0 10px 10px;
+}
+
+.button {
+	background-color: #808080; /* Green */
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	margin: 4px 2px;
+	cursor: pointer;
+	border-radius: 12px;
+}
+</style>
+</head>
+<body ng-controller="virtualDoctorController"
+	ng-init="populate('<%=JSON.stringify(classes) %>');">
+
+	<nav class="navbar navbar-inverse">
+		<div class="container-fluid">
+			<div class="navbar-header">
+				<button type="button" class="navbar-toggle" data-toggle="collapse"
+					data-target="#myNavbar">
+					<span class="icon-bar"></span> <span class="icon-bar"></span> <span
+						class="icon-bar"></span>
+				</button>
+
+			</div>
+			<div class="collapse navbar-collapse" id="myNavbar">
+				<ul class="nav navbar-nav">
+					<li class="active"><a href="/">Home</a></li>
+
+				</ul>
+
+			</div>
+		</div>
+	</nav>
+
+	<div class="container text-center">
+		<h1>VIRTUAL DOCTOR @Your Service</h1>
+		<br>
+		<div class="row">
+			<div class="col-sm-4">
+			<% if(treatment!=undefined){ %>
+				<img src="<%= treatment.img %>" class="img-responsive"
+					style="width: 100%" alt="Image">
+			<% } %>
+			</div>
+			<div class="col-sm-4">
+				<br /> <br /> <br />
+				<h2>
+					You are <%=(classes[0].confidence * 100).toFixed(2) %>% likely to
+					have <Strong><%= top_class %></strong>
+				</h2>
+				<button class="button" style="width:100%">Find Doctors</button>	
+			</div>
+			
+			<h3>
+				<font color="#8BBA5D"><b>Illness prediction</b></font>
+			</h3>
+			<div id="container" class="graph"
+				style="width: 310px; height: 400px; margin: 0 auto"></div>
+		</div>
+
+		<hr />
+		
+		<h1>Alternative Treatment option</h1>
+		<hr/>
+		</div>
+		
+		<div class="text-center">
+		
+		<% if(treatment!=undefined){if(treatment.Ayurveda.length>0 && treatment.Ayurveda!=undefined){ %>
+		<div class="col-sm-4">
+			<h2 align="center">Ayurveda</h2>
+			<% for(var i = 0 ; i < treatment.Ayurveda.length;i++){ %> <u><b><%=
+					treatment.Ayurveda[i].name %></u></b><br /> <%=
+			treatment.Ayurveda[i].remedy %> <br /> <br /> <% }} %>
+		</div>
+
+		<% if(treatment.Others.length>0 && treatment.Others!=undefined){ %>
+		
+			<% if(treatment.Others[0].name =="Physiotherapy" && treatment.Others[0].remedy!="NA"){ %>
+			<div class="col-sm-4">
+			<h2 align="center">Physiotherapy</h2>
+			<ul>
+			
+			<% for(var i = 0 ; i < treatment.Others.length;i++){ %> 
+			
+			<% if(treatment.Others[i].name =="Physiotherapy" && treatment.Others[i].remedy!="NA") { %>
+			<br /><li><%= treatment.Others[i].remedy%> </li><% }} %>
+			</ul>
+			<% } %>
+		</div>
+		<% } %>
+		
+		<% if(treatment.Others.length>0 && treatment.Others!=undefined){ %>
+		<div class="col-sm-4">
+			<h2 align="center">Precaution</h2>
+			<ul>
+			<% for(var i = 0 ; i < treatment.Others.length;i++){ %> 
+			<% if(treatment.Others[i].name =="Precaution"  && treatment.Others[i].remedy!="NA"){ %>
+			<br /> <li><%= treatment.Others[i].remedy	%> <br /></li><% }}}} %>
+			</ul>
+		</div>
+		
+	</div>
+	
+
+</body>
+</html>

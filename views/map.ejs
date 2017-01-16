@@ -1,0 +1,113 @@
+<html>
+<head>
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no"/>
+  <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+  <title>Virtual Doctor@Your Service</title>
+  
+    <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" />
+      <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+      <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDisx6H59anz2QMatTfQjBPjMu2Sz9uFgw&libraries=places"></script>
+  
+  <script type="text/javascript">
+
+    var geocoder;
+    var map;
+    var infowindow;
+    function initialize() {
+      geocoder = new google.maps.Geocoder();
+      var latlng = new google.maps.LatLng(37.34, -121.88);
+      var mapOptions = {
+        zoom: 8,
+        center: latlng
+      }
+      map = new google.maps.Map(document.getElementById("map"), mapOptions);
+    }
+
+    function codeAddress() {
+      console.log("in find doc address");
+      var address = document.getElementById("address").value;
+      console.log(address);
+      geocoder.geocode( { 'address': address}, function(results, status) {
+        if (status == google.maps.GeocoderStatus.OK) {
+          map.setCenter(results[0].geometry.location);
+          var marker = new google.maps.Marker({
+            map: map,
+            position: results[0].geometry.location
+          });
+          console.log("Marker is :"+marker.position);
+
+          map = new google.maps.Map(document.getElementById('map'), {
+            center: marker.position,
+            zoom: 15
+          });
+
+          infowindow = new google.maps.InfoWindow();
+          var service = new google.maps.places.PlacesService(map);
+          service.nearbySearch({
+            location: marker.position,
+            radius: 1000,
+            type: ['doctor']
+          }, callback);
+
+        } else {
+          alert("Geocode was not successful for the following reason: " + status);
+        }
+      });
+    }
+    function callback(results, status) {
+      if (status === google.maps.places.PlacesServiceStatus.OK) {
+        for (var i = 0; i < results.length; i++) {
+          createMarker(results[i]);
+          console.log("places i guess"+results[i]);
+        }
+      }
+    }
+
+    function createMarker(place) {
+      var placeLoc = place.geometry.location;
+      var marker = new google.maps.Marker({
+        map: map,
+        position: place.geometry.location
+      });
+
+      google.maps.event.addListener(marker, 'click', function() {
+        infowindow.setContent(place.name);
+        infowindow.open(map, this);
+      });
+    }
+
+  </script>
+</head>
+<body onload="initialize()">
+  <!--Nav start-->
+  <nav class="navbar navbar-inverse">
+    <div class="container-fluid">
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse"
+        data-target="#myNavbar">
+        <span class="icon-bar"></span> <span class="icon-bar"></span> <span
+        class="icon-bar"></span>
+      </button>
+
+    </div>
+    <div class="collapse navbar-collapse" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li class="active"><a href="/">Home</a></li>
+
+      </ul>
+
+    </div>
+  </div>
+</nav><!--Nav end-->
+<div class="container" align="center">
+  <h2>Search Doctors in your area</h2>
+    <!--Input start-->
+    <div style="margin :10px;">   
+      <input id="address" type="textbox" placeholder="Enter ZIP code" width="48em" height="48em">
+      <input type="button" value="Search" onclick="codeAddress()">
+    </div><!--Input end-->
+    <div id="map" style="width:65%; height: 70%;"></div>
+</div>
+</body>
+</html>
